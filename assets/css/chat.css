@@ -76,7 +76,10 @@ zapier-interfaces-chatbot-embed {
    hidden but present in the document (PRD S-12/S-18/S-19). ?chat=local
    flips this via the .chat-mode-local class chat-ui.js adds to <body>. */
 
-.local-chat-only { display: none; }
+/* Must out-specify later single-class rules such as `.composer__box{display:flex}`,
+   which would otherwise win on source order and leak a dead second input box
+   underneath the Zapier embed. */
+body:not(.chat-mode-local) .local-chat-only { display: none !important; }
 
 body.chat-mode-local .chat-embed-frame { display: none; }
 body.chat-mode-local .chat-body.local-chat-only { display: flex; }

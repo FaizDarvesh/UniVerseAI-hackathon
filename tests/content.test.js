@@ -227,6 +227,12 @@ describe('content — PRD §6.4', () => {
     const ui = fs.readFileSync(path.join(JS_DIR, 'chat-ui.js'), 'utf8');
     expect(ui, 'chat-ui.js does not read the ?chat=local flag').toMatch(/chat=local|['"]local['"]/);
     expect(ui).toContain('chat-mode-local');
+    // The hide rule must out-specify later single-class rules (e.g. .composer__box
+    // { display:flex }), or the local composer leaks in below the Zapier embed.
+    const css = fs.readFileSync(path.join(ROOT, 'assets', 'css', 'chat.css'), 'utf8');
+    expect(css, 'local-chat hide rule is not specificity-safe').toMatch(
+      /body:not\(\.chat-mode-local\)\s+\.local-chat-only\s*\{[^}]*display:\s*none\s*!important/,
+    );
   });
 
   it('S-22 the sources modal is a classic script that leaks no URLs', () => {
