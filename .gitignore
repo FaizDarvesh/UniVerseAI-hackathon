@@ -6,6 +6,9 @@ assets/js/config.local.js
 
 # Dependencies
 node_modules/
+zapier.js
+package.json
+package-lock.json
 
 # OS / editor
 Thumbs.db
@@ -19,3 +22,5 @@ Thumbs.db
 # Designs
 Mockups/
 docs/
+tests/
+
