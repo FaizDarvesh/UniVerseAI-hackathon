@@ -57,8 +57,8 @@ describe('content — PRD §6.4', () => {
 
   it('S-04 hero copy is verbatim', () => {
     const html = readIndex();
-    expect(html).toContain('Admission season is confusing.');
-    expect(html).toContain("You don't have to be.");
+    expect(html).toContain('Admission season can be confusing.');
+    expect(html).toContain("We're here to help.");
   });
 
   it('S-05 predictor disclaimer is verbatim', () => {
