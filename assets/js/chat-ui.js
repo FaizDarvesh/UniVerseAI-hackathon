@@ -23,11 +23,11 @@
   ];
 
   var TOPICS = [
-    { label: 'Cutoffs & ranks', query: 'What are the cutoff ranks for CSE this year?' },
-    { label: 'Fees & deposits', query: 'What fees and deposits should I expect at admission?' },
-    { label: 'Scholarships', query: 'Is there a fee waiver or scholarship for SC/ST/OBC/EWS students?' },
-    { label: 'Placements', query: 'Which colleges have the best placement record?' },
-    { label: 'Counselling dates', query: 'What are the REAP 2026 counselling dates?' }
+    { label: 'Cutoffs & ranks', query: 'What are the cutoff ranks for CSE this year?', icon: 'trending-up' },
+    { label: 'Fees & deposits', query: 'What fees and deposits should I expect at admission?', icon: 'wallet' },
+    { label: 'Scholarships', query: 'Is there a fee waiver or scholarship for SC/ST/OBC/EWS students?', icon: 'award' },
+    { label: 'Placements', query: 'Which colleges have the best placement record?', icon: 'briefcase' },
+    { label: 'Counselling dates', query: 'What are the REAP 2026 counselling dates?', icon: 'calendar-days' }
   ];
 
   var CHANCE_CLASS = {
@@ -162,7 +162,14 @@
       var chip = document.createElement('button');
       chip.type = 'button';
       chip.className = 'topic-chip';
-      chip.textContent = topic.label;
+      if (window.Icons && topic.icon) {
+        var iconSpan = document.createElement('span');
+        iconSpan.className = 'topic-chip__icon';
+        iconSpan.style.cssText = 'display:inline-flex;align-items:center;vertical-align:middle;margin-right:6px';
+        iconSpan.innerHTML = window.Icons.svg(topic.icon, 14);
+        chip.appendChild(iconSpan);
+      }
+      chip.appendChild(document.createTextNode(topic.label));
       chip.addEventListener('click', function () { sendMessage(topic.query); });
       topicsRow.appendChild(chip);
     });
@@ -489,24 +496,29 @@
   }
 
   /* ── Icons (static, non-user-controlled markup) ──────────────────── */
+  /* Sourced from assets/js/icons.js (official Lucide path data, inlined —
+     see docs/SPEC.md §3, §9). All decorative: Icons.svg() always marks its
+     output aria-hidden + non-focusable, and every call site here places the
+     icon next to a visible label or inside a control that already carries
+     its own aria-label, so no accessible name is lost. */
 
   function uniAvatarSvg() {
-    return '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M3 8.5 12 4l9 4.5-9 4.5-9-4.5Z"></path><path d="M7 11v4.2c0 1 2.2 2.3 5 2.3s5-1.3 5-2.3V11"></path></svg>';
+    return window.Icons ? window.Icons.svg('graduation-cap', 20, { stroke: '#fff' }) : '';
   }
 
   function collegeIconSvg() {
-    return '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3D5CD8" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V9l7-5 7 5v12"></path><path d="M10 21v-5h4v5"></path></svg>';
+    return window.Icons ? window.Icons.svg('landmark', 20, { stroke: '#3D5CD8' }) : '';
   }
 
   function shieldSvg() {
-    return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5A5F80" stroke-width="2" stroke-linecap="round"><path d="M12 3 4 6.5v5c0 4.6 3.3 8.5 8 9.5 4.7-1 8-4.9 8-9.5v-5L12 3Z"></path><path d="m9 12 2 2 4-4"></path></svg>';
+    return window.Icons ? window.Icons.svg('shield-check', 16, { stroke: '#5A5F80' }) : '';
   }
 
   function whatsappSvg() {
-    return '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3D5CD8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-8 8H5l-2 2V12a8 8 0 0 1 8-8h2a8 8 0 0 1 8 8Z"></path></svg>';
+    return window.Icons ? window.Icons.svg('message-circle', 14) : '';
   }
 
   function pdfSvg() {
-    return '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3D5CD8" stroke-width="2" stroke-linecap="round"><path d="M12 3v13M7 11l5 5 5-5M4 20h16"></path></svg>';
+    return window.Icons ? window.Icons.svg('download', 14) : '';
   }
 })();

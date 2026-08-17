@@ -68,7 +68,7 @@ zapier-interfaces-chatbot-embed {
 
 .chat-embed-fallback a {
   font-weight: 700;
-  color: var(--blue);
+  color: var(--blue-text);
 }
 
 /* ── Local chat / Zapier embed toggle (Task 2) ───────────────────────
@@ -225,7 +225,7 @@ body.chat-mode-local .composer__box.local-chat-only { display: flex; }
   border: 1px solid var(--hairline);
   border-radius: 18px 18px 18px 6px;
   padding: 22px 24px;
-  box-shadow: 0 3px 14px rgba(27, 24, 86, .05);
+  box-shadow: var(--shadow-card);
 }
 
 .msg__text {
@@ -358,8 +358,8 @@ body.chat-mode-local .composer__box.local-chat-only { display: flex; }
   gap: 10px;
   padding: 12px 15px;
   border-radius: 12px;
-  background: #F8F9FE;
-  border: 1px dashed rgba(27, 24, 86, .16);
+  background: var(--surface-alt);
+  border: 1px dashed var(--border);
   margin-bottom: 16px;
 }
 
@@ -374,7 +374,7 @@ body.chat-mode-local .composer__box.local-chat-only { display: flex; }
   background: var(--surface);
   border: 1px solid var(--border);
   font: 600 11.5px var(--font-sans);
-  color: var(--blue);
+  color: var(--blue-text);
 }
 
 .sources__checked {
@@ -402,7 +402,7 @@ body.chat-mode-local .composer__box.local-chat-only { display: flex; }
   border-radius: 9px;
   background: var(--surface-alt);
   font: 600 12.5px var(--font-sans);
-  color: var(--blue);
+  color: var(--blue-text);
   border: none;
   cursor: pointer;
 }
@@ -425,7 +425,7 @@ body.chat-mode-local .composer__box.local-chat-only { display: flex; }
   background: var(--surface);
   border: 1.5px solid rgba(61, 92, 216, .25);
   font: 600 13px var(--font-sans);
-  color: var(--blue);
+  color: var(--blue-text);
   cursor: pointer;
 }
 
@@ -475,7 +475,7 @@ body.chat-mode-local .composer__box.local-chat-only { display: flex; }
   background: var(--surface-alt);
   border: none;
   font: 600 12.5px var(--font-sans);
-  color: var(--blue);
+  color: var(--blue-text);
   flex: none;
   cursor: default;
 }
@@ -536,7 +536,7 @@ body.chat-mode-local .composer__box.local-chat-only { display: flex; }
 
 .verified-strip a {
   font: 600 11.5px var(--font-sans);
-  color: var(--blue);
+  color: var(--blue-text);
   white-space: nowrap;
 }
 

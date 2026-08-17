@@ -15,8 +15,8 @@
   letter-spacing: var(--tracking-wider);
   margin-bottom: 14px;
 }
-.eyebrow-purple { color: var(--purple); }
-.eyebrow-blue   { color: #2BA7E3; }
+.eyebrow-purple { color: var(--purple-text); }
+.eyebrow-blue   { color: var(--cyan-text); }
 
 .section-sub {
   margin: 0 0 26px;
@@ -32,6 +32,7 @@
 .chip {
   display: inline-flex;
   align-items: center;
+  flex: none; /* never shrinks/wraps away from its row (e.g. .result-row) */
   padding: 5px 11px;
   border-radius: var(--r-pill);
   font: 700 11.5px var(--font-sans);
@@ -75,7 +76,7 @@
 /* ── Header ─────────────────────────────────────────────────── */
 .site-header {
   border-bottom: 1px solid var(--border-soft);
-  background: rgba(255, 255, 255, .9);
+  background: var(--header-bg);
   position: sticky;
   top: 0;
   z-index: 20;
@@ -97,8 +98,11 @@
   width: 40px;
   height: 40px;
   border-radius: var(--r-tile);
-  background: var(--surface);
-  border: 1px solid var(--border);
+  /* Logo PNG is designed for a light background — keep a constant light
+     plate here rather than filtering the image, per task spec, so it stays
+     legible when --surface goes dark. */
+  background: var(--logo-plate);
+  border: 1px solid var(--logo-plate-border);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -253,14 +257,14 @@
   gap: 10px;
   padding: 14px 18px;
   border-bottom: 1px solid var(--border-soft);
-  background: #FBFCFF;
+  background: var(--surface-alt);
 }
 .chat-preview-logo {
   width: 28px;
   height: 28px;
   border-radius: 9px;
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: var(--logo-plate);
+  border: 1px solid var(--logo-plate-border);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -274,13 +278,16 @@
   gap: 6px;
   margin-left: auto;
   font: 500 11.5px var(--font-sans);
-  color: #3F9B5C;
+  /* was a hardcoded #3F9B5C — 3.38:1 on white, already under AA before this
+     pass. Reuses --safe-fg (same "good/positive" green family, 5.25:1 on
+     white / 11.03:1 on the dark surface-alt). */
+  color: var(--safe-fg);
 }
 .chat-preview-dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #3F9B5C;
+  background: var(--safe-fg);
   animation: uvPulse 2.4s ease-in-out infinite;
   display: inline-block;
 }
@@ -289,7 +296,7 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
-  background: #FBFCFF;
+  background: var(--surface-alt);
 }
 .chat-bubble-user {
   align-self: flex-end;
@@ -380,7 +387,11 @@
   flex: none;
 }
 
-/* Stats strip (dark) */
+/* Stats strip — always a dark panel, in both themes. Uses --ink-surface (not
+   --ink, which now flips to a light colour for heading text) plus a border
+   that's invisible in light mode and a visible hairline in dark mode, so the
+   strip keeps reading as an elevated panel instead of blending into an
+   equally-dark page canvas. */
 .stats-strip {
   position: relative;
   display: flex;
@@ -390,7 +401,9 @@
   margin: 52px auto 0;
   padding: 22px 30px;
   border-radius: var(--r-card);
-  background: var(--ink);
+  background: var(--ink-surface);
+  border: 1px solid var(--ink-surface-border);
+  box-shadow: var(--shadow-card);
   color: #fff;
   flex-wrap: wrap;
 }
@@ -455,6 +468,15 @@
   gap: 48px;
   align-items: start;
 }
+/* Grid items default to `min-width: auto`, which means their min-content
+   size (e.g. a long select option, an unbroken chip row) can force the
+   track — and the whole grid — wider than the viewport. Pinning both
+   columns to min-width: 0 lets their content wrap/shrink inside the track
+   instead, which is what actually stops horizontal scroll on narrow phones. */
+.predictor-intro,
+.predictor-results {
+  min-width: 0;
+}
 .predictor-h2-mobile { display: none; }
 .predictor-sub-desktop { display: block; }
 
@@ -463,7 +485,7 @@
   border: 1px solid var(--border);
   border-radius: var(--r-card);
   padding: 22px;
-  box-shadow: 0 6px 22px rgba(27, 24, 86, .06);
+  box-shadow: var(--shadow-card);
 }
 .predictor-rank-label {
   display: flex;
@@ -477,19 +499,71 @@
 }
 .predictor-rank-value {
   font: 700 20px var(--font-mono);
-  color: var(--blue);
+  color: var(--blue-text);
 }
+
+/* ── Rank slider ────────────────────────────────────────────
+   Custom track + thumb (native `accent-color` alone can't guarantee a 44px
+   touch target). The thumb is sized up specifically in the <768px block
+   below; here it's a comfortable pointer-friendly size for desktop/tablet. */
 .predictor-slider {
+  -webkit-appearance: none;
+  appearance: none;
   width: 100%;
-  accent-color: var(--blue);
-  margin-bottom: 20px;
-  min-height: 24px;
+  max-width: 100%;
+  height: 28px;
+  margin: 0 0 20px;
+  background: transparent;
+  accent-color: var(--blue-text);
+  cursor: pointer;
+  touch-action: manipulation;
 }
+.predictor-slider::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: var(--r-pill);
+  background: var(--border);
+}
+.predictor-slider::-moz-range-track {
+  height: 6px;
+  border-radius: var(--r-pill);
+  background: var(--border);
+}
+.predictor-slider::-moz-range-progress {
+  height: 6px;
+  border-radius: var(--r-pill);
+  background: var(--blue-text);
+}
+.predictor-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 24px;
+  height: 24px;
+  margin-top: -9px; /* (24 - 6) / 2, centres thumb on the 6px track */
+  border-radius: 50%;
+  background: var(--surface);
+  border: 3px solid var(--blue-text);
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+}
+.predictor-slider::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 3px solid var(--blue-text);
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+}
+
 .predictor-field-label {
   font: 700 13px var(--font-sans);
   color: var(--ink);
   margin-bottom: 10px;
 }
+
+/* ── Category chips ─────────────────────────────────────────
+   Wraps rather than shrinking: chips never compress below their content +
+   padding (flex-shrink: 0), so at narrow widths the group wraps to 2-3 rows
+   instead of squeezing chips under the 44px touch target. */
 .chip-group {
   display: flex;
   flex-wrap: wrap;
@@ -497,33 +571,45 @@
   margin-bottom: 20px;
 }
 .category-chip {
-  padding: 9px 14px;
+  flex: 0 0 auto;
+  padding: 10px 14px;
   border-radius: 10px;
   border: 1.5px solid var(--border);
   background: var(--surface);
   color: var(--ink);
   font: 700 12.5px var(--font-sans);
   cursor: pointer;
-  min-height: 40px;
+  min-height: 44px;
 }
 .category-chip[aria-pressed="true"] {
-  border-color: var(--blue);
+  border-color: var(--blue-text);
   background: var(--surface-alt);
-  color: var(--blue);
+  color: var(--blue-text);
 }
 .predictor-select {
   width: 100%;
   padding: 12px 14px;
   border-radius: 11px;
   border: 1.5px solid var(--border);
-  background: #FBFCFF;
+  background: var(--surface-alt);
   font: 600 13.5px var(--font-sans);
   color: var(--ink);
   appearance: none;
   min-height: 44px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%237A7FA0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235E6283' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 14px center;
+}
+@media (prefers-color-scheme: dark) {
+  .predictor-select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23A5AAD4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  }
+}
+:root[data-theme="dark"] .predictor-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23A5AAD4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+}
+:root[data-theme="light"] .predictor-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235E6283' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
 }
 
 .predictor-results-head {
@@ -555,7 +641,7 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  box-shadow: 0 3px 12px rgba(27, 24, 86, .05);
+  box-shadow: var(--shadow-card);
 }
 .result-card-top {
   display: flex;
@@ -571,7 +657,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--blue);
+  color: var(--blue-text);
 }
 .result-name { font: 700 14.5px/1.3 var(--font-sans); color: var(--ink); }
 .result-sub { font: 500 12px var(--font-sans); color: var(--muted); margin-top: 3px; }
@@ -602,6 +688,9 @@
   grid-column: 1 / -1;
 }
 
+/* Reuses the "Reach" chance-band palette (same amber family as the original
+   hardcoded #FFF8EE/#8A6320) so the disclaimer gets a themed dark variant for
+   free instead of needing its own pair of tokens. */
 .predictor-disclaimer {
   display: flex;
   align-items: center;
@@ -609,11 +698,11 @@
   margin-top: 16px;
   padding: 13px 16px;
   border-radius: 12px;
-  background: #FFF8EE;
-  border: 1px solid rgba(233, 160, 50, .28);
-  color: #8A6320;
+  background: var(--reach-bg);
+  border: 1px solid var(--reach-border);
+  color: var(--reach-fg);
 }
-.predictor-disclaimer svg { flex: none; color: #B07A22; }
+.predictor-disclaimer svg { flex: none; color: var(--reach-fg); }
 .predictor-disclaimer span { font: 500 12.5px/1.5 var(--font-sans); }
 
 /* Mobile compact predictor rows */
@@ -625,6 +714,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  max-width: 100%;
 }
 .result-row-icon {
   flex: none;
@@ -635,9 +725,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--blue);
+  color: var(--blue-text);
 }
-.result-row-info { flex: 1; min-width: 0; }
+.result-row-info { flex: 1 1 auto; min-width: 0; }
 .result-row-name {
   font: 700 13.5px/1.3 var(--font-sans);
   color: var(--ink);
@@ -723,12 +813,12 @@
   flex-direction: column;
   gap: 18px;
 }
-.testimonial-card-dark { background: var(--ink); border: none; }
+.testimonial-card-dark { background: var(--ink-surface); border: none; }
 .testimonial-quote {
   font: 400 40px/1 var(--font-serif);
 }
-.testimonial-quote-blue { color: #2BA7E3; }
-.testimonial-quote-purple { color: var(--purple); }
+.testimonial-quote-blue { color: var(--cyan-text); }
+.testimonial-quote-purple { color: var(--purple-text); }
 .testimonial-text { margin: 0; flex: 1; font: 400 15.5px/1.65 var(--font-sans); color: var(--ink); }
 .testimonial-text-light { color: #fff; }
 .testimonial-person { display: flex; align-items: center; gap: 11px; }
@@ -760,7 +850,7 @@
   position: relative;
   overflow: hidden;
   border-radius: 24px;
-  background: linear-gradient(120deg, var(--ink) 0%, var(--blue) 58%, var(--purple) 100%);
+  background: linear-gradient(120deg, var(--ink-surface) 0%, var(--blue) 58%, var(--purple) 100%);
   padding: 54px 56px;
   display: flex;
   align-items: center;
@@ -800,7 +890,7 @@
 /* ── Footer ─────────────────────────────────────────────────── */
 .site-footer {
   padding: 52px var(--gutter-desktop) 34px;
-  background: #12103B;
+  background: var(--ink-surface);
   color: #fff;
 }
 .footer-columns {
@@ -939,7 +1029,7 @@
     margin-top: 22px;
     padding: 16px 18px;
     border-radius: 16px;
-    background: var(--ink);
+    background: var(--ink-surface);
   }
   .hero-mobile-stat { display: flex; flex-direction: column; }
   .hero-mobile-stat-num { font: 800 22px/1 var(--font-sans); color: #fff; }
@@ -950,10 +1040,36 @@
   .predictor-h2-desktop { display: none; }
   .predictor-h2-mobile { display: block; font-size: 26px; line-height: 1.15; }
   .predictor-sub-desktop { display: none; }
-  .predictor-card { padding: 18px; margin-bottom: 14px; }
+  .predictor-card { padding: 18px; margin-bottom: 14px; max-width: 100%; }
   .predictor-results-tag { display: none; }
   .predictor-cards { display: none; }
-  .predictor-rows { display: flex; flex-direction: column; gap: 10px; }
+  .predictor-rows { display: flex; flex-direction: column; gap: 10px; max-width: 100%; }
+
+  /* Rank slider — thumb grown to a full 44x44 touch target on phones (kept
+     smaller on desktop/tablet where a mouse pointer is precise). Height on
+     the input itself matches so the touch target isn't clipped by a shorter
+     box, and width stays 100% with no min-width so it can never force
+     horizontal scroll at 320px. */
+  .predictor-slider { height: 44px; }
+  .predictor-slider::-webkit-slider-thumb {
+    width: 44px;
+    height: 44px;
+    margin-top: -22px; /* (44 - 6) / 2, centres on the 6px track */
+  }
+  .predictor-slider::-moz-range-thumb {
+    width: 44px;
+    height: 44px;
+  }
+
+  /* Category chips — an even 2-3 column grid rather than a flex line that
+     wraps unevenly (e.g. 4-then-1). Each column is at least 84px, well
+     above the 44px touch-target floor even before min-height kicks in. */
+  .chip-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+    gap: 10px;
+  }
+  .category-chip { width: 100%; padding-left: 8px; padding-right: 8px; text-align: center; }
 
   .features { padding: 26px var(--gutter-mobile); }
   .features-intro { text-align: left; margin-bottom: 16px; }
@@ -973,7 +1089,7 @@
   .testimonials-note { display: none; }
   .testimonials-grid { grid-template-columns: 1fr; gap: 14px; }
   .testimonial-card { padding: 22px; border-radius: 18px; }
-  .testimonial-card:not(.testimonial-card-dark) { background: var(--ink); border: none; }
+  .testimonial-card:not(.testimonial-card-dark) { background: var(--ink-surface); border: none; }
   .testimonial-card:not(.testimonial-card-dark) .testimonial-text { color: #fff; }
   .testimonial-card:not(.testimonial-card-dark) .testimonial-name { color: #fff; }
   .testimonial-card:not(.testimonial-card-dark) .testimonial-role { color: var(--on-ink-muted); }

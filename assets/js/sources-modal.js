@@ -147,7 +147,14 @@
       class: 'usm-close',
       'aria-label': 'Close'
     });
-    closeBtn.textContent = '×';
+    // Icon-only control: the SVG is decorative (aria-hidden, built by
+    // assets/js/icons.js — official Lucide "x" path data), the accessible
+    // name lives on the button's aria-label above.
+    if (window.Icons) {
+      closeBtn.innerHTML = window.Icons.svg('x', 18);
+    } else {
+      closeBtn.textContent = '×';
+    }
     closeBtn.addEventListener('click', closeModal);
 
     var header = el('div', { class: 'usm-header' }, [

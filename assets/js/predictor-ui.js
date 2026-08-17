@@ -131,8 +131,11 @@
     return r.placed + '%';
   }
 
-  var houseIconSvg = '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V9l7-5 7 5v12"></path><path d="M10 21v-5h4v5"></path></svg>';
-  var houseIconSvgSmall = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V9l7-5 7 5v12"></path><path d="M10 21v-5h4v5"></path></svg>';
+  // Institution icon for result cards — official Lucide "landmark" path data
+  // via assets/js/icons.js (see docs/SPEC.md §3, §9). Decorative: sits next
+  // to the college name, so Icons.svg()'s aria-hidden output is correct as-is.
+  var houseIconSvg = window.Icons ? window.Icons.svg('landmark', 19) : '';
+  var houseIconSvgSmall = window.Icons ? window.Icons.svg('landmark', 18) : '';
 
   function renderDesktopCards(results) {
     var container = els.cardsDesktop;
